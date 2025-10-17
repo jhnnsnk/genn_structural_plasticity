@@ -1,0 +1,1 @@
+{"neuron_update": 220.90969585516743, "presynaptic_update": 52.53508978276024, "synapse_dynamics": 33829.7563589137, "custom_update_gradient_batch_reduce": 2.514338150024415, "custom_update_gradient_learn": 0.005593568008393046, "custom_update_reset": 0.0024550720052793637, "custom_update_softmax_1": 18.57749728002258, "custom_update_softmax_2": 17.945597239648496}

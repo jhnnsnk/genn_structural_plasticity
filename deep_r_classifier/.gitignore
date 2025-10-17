@@ -1,0 +1,10 @@
+# Subdirectories
+*_CODE
+checkpoints_*
+data
+
+# File types
+*.dll
+*.exp
+*.pdb
+*.lib
