@@ -17,6 +17,8 @@ The entry point is `deep_r_classifier/classifier.py` which has is completely con
 `classifier.py --mode train --dataset dvs_gesture --record-rewiring --num-epochs 50 --seed 1234 --dataset-threshold 1 --l1-strength 0.01 --hidden-size 512 --hidden-recurrent True --hidden-model alif --hidden-input-sparsity 0.01 --hidden-recurrent-sparsity 0.01 --row-padding-prop 2.0 --rewire`
 
 Will train a model with 512 recurrently connected ALIF neurons for 50 epochs on the DVS gesture dataset with standard pre-processing applied.
+These command line arguments can also be provided in a text file (`arguments.txt`) and used as input for SLURM array job-based parameter sweeping.
+See `deep_r_classifier/train_evaluate_validation_args_jade.sh` for an example script to launch such jobs on an HPC system with 1 GPU per node or `deep_r_classifier/train_evaluate_validation_args_juwels.sh` for an HPC system with 4 GPUs per node.
 
 ## Topographic map formation
 
