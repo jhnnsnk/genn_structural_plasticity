@@ -298,11 +298,8 @@ def analyze_connectivity_evolution(dir, net_dict, conntype="ff"):
     return
 
 
-def plot_connectivity_evolution(dir, net_dict, conntype="ff",
-                                binwidth_heat_time_ms=200.,
-                                binwidth_heat_distance=1.,
-                                binwidth_hist_time_ms=200.):
-    print(f"Plotting connectivity evolution for {conntype}.")
+def analyze_connections_per_neuron(dir, net_dict, conntype="ff"):
+    print(f"Analyzing connections per neuron for {conntype}.")
 
     with open(os.path.join(dir, "data_pre_inds.pkl"),  'rb') as f:
         data_pre_inds = pickle.load(f)
@@ -311,9 +308,40 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
         data_post_inds = pickle.load(f)
         data_post_inds = data_post_inds[conntype]
 
+    conns = {}
+    conns["times"] = list(data_pre_inds.keys())  # same for pre and post
+
+    for data_inds, label in zip([data_post_inds, data_pre_inds],
+                                ["post", "pre"]):
+
+        mean = np.ones(len(data_inds)) * np.nan
+        std = np.ones(len(data_inds)) * np.nan
+        for i, time in enumerate(data_inds):
+            unique, counts = np.unique(data_inds[time], return_counts=True)
+            mean[i] = np.mean(counts)
+            std[i] = np.std(counts)
+
+        conns[label] = {"mean": mean, "std": std}
+
+    with open(os.path.join(dir, f"connections_per_neuron_{conntype}.pkl"),  'wb') as f:
+        pickle.dump(conns, f)
+
+
+def plot_connectivity_evolution(dir, net_dict, conntype="ff",
+                                binwidth_heat_time_ms=200.,
+                                binwidth_heat_distance=1.,
+                                binwidth_hist_time_ms=200.):
+    print(f"Plotting connectivity evolution for {conntype}.")
+
     with open(os.path.join(dir, f"connectivity_evolution_{conntype}.pkl"),  'rb') as f:
         changed_conns = pickle.load(f)
     times = changed_conns["times_ms"]
+
+    with open(os.path.join(dir, f"connections_per_neuron_{conntype}.pkl"),  'rb') as f:
+        conns = pickle.load(f)
+        times_conns_per_neuron = conns["times"]
+        conns_pre = conns["pre"]
+        conns_post = conns["post"]
 
     # standard deviation auf Gaussion for formation
     if conntype == "ff":
@@ -419,6 +447,7 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
                     align='edge', color=pd[color])
 
         ax_hist.set_xlim(times[1], times[-1])
+        ax_hist.set_ylim(0, np.max(rate)*1.3)
 
         # change time tick labels from ms to s
         xticks = ax_hist.get_xticks()
@@ -433,27 +462,23 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
     ax_degree = plt.subplot(gs[2])
     helpers.add_label(ax_degree, "C")
     ax_degree.set_title("Connections per neuron")
-    for data_inds, label, lw, color in zip([data_post_inds, data_pre_inds],
-                                           ["In-degree", "Out-degree"],
-                                           [4., 1.],
-                                           ["black", "firebrick"]):
+    for conns, label, lw, color in zip([conns_post, conns_pre],
+                                       ["In-degree", "Out-degree"],
+                                       [4., 1.],
+                                       ["black", "firebrick"]):
 
-        mean = np.ones(len(data_inds)) * np.nan
-        std = np.ones(len(data_inds)) * np.nan
-        for i, time in enumerate(data_inds):
-            unique, counts = np.unique(data_inds[time], return_counts=True)
-            mean[i] = np.mean(counts)
-            std[i] = np.std(counts)
+        mean = conns["mean"]
+        std = conns["std"]
 
-        ax_degree.plot(list(data_inds.keys()), mean, '-',
+        ax_degree.plot(times_conns_per_neuron, mean, '-',
                        linewidth=matplotlib.rcParams["lines.linewidth"]*lw,
                        color=color,
                        label=label + " (mean)")
-        ax_degree.plot(list(data_inds.keys()), mean-std, '-',
+        ax_degree.plot(times_conns_per_neuron, mean-std, '-',
                        linewidth=matplotlib.rcParams["lines.linewidth"]*lw,
                        color=color, alpha=0.5,
                        label=label + r" (mean $\pm$ std)")
-        ax_degree.plot(list(data_inds.keys()), mean+std, '-',
+        ax_degree.plot(times_conns_per_neuron, mean+std, '-',
                        linewidth=matplotlib.rcParams["lines.linewidth"]*lw,
                        color=color, alpha=0.5)
 

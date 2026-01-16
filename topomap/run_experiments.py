@@ -244,6 +244,10 @@ if __name__ == "__main__":
                 sdict["dir"], ndict, conntype="ff")
             figures_ms.analyze_connectivity_evolution(
                 sdict["dir"], ndict, conntype="lat")
+            figures_ms.analyze_connections_per_neuron(
+                sdict["dir"], ndict, conntype="ff")
+            figures_ms.analyze_connections_per_neuron(
+                sdict["dir"], ndict, conntype="lat")
             time_stop_process_conn_evo = time.time()
             print("\n Time to process connectivity evolution: {:.3f}\n".format(
                 time_stop_process_conn_evo - time_start_process_conn_evo))
