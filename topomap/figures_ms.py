@@ -8,16 +8,10 @@ from matplotlib.ticker import MaxNLocator
 from collections import defaultdict
 import helpers
 import network_sketch as ns
+import seaborn as sns
+import plot_settings
 
 pd = helpers.plot_dict
-
-plt.rc('font', size=pd["SMALL_SIZE"])          # controls default text sizes
-plt.rc('axes', titlesize=pd["BIGGER_SIZE"])    # fontsize of the axes title
-plt.rc('axes', labelsize=pd["MEDIUM_SIZE"])    # fontsize of the x and y labels
-plt.rc('xtick', labelsize=pd["SMALL_SIZE"])    # fontsize of the tick labels
-plt.rc('ytick', labelsize=pd["SMALL_SIZE"])    # fontsize of the tick labels
-plt.rc('legend', fontsize=pd["SMALL_SIZE"])    # legend fontsize
-plt.rc('figure', titlesize=pd["BIGGER_SIZE"])  # fontsize of the figure title
 
 ################################################################################
 # 1. Methods figure
@@ -27,7 +21,7 @@ plt.rc('figure', titlesize=pd["BIGGER_SIZE"])  # fontsize of the figure title
 def network_sketch_init_final(net_dict, sim_dict, data_source="load"):
     print("Plotting network sketch, and initial vs. final")
 
-    fig = plt.figure(figsize=(pd["figure_width"], 6))
+    fig = plt.figure(figsize=(plot_settings.double_column_width, 6))
     gs = gridspec.GridSpec(6, 5)
     gs.update(left=0.01, right=0.98, wspace=2,
               hspace=0.5, top=1.05, bottom=0.08)
@@ -54,6 +48,7 @@ def network_sketch_init_final(net_dict, sim_dict, data_source="load"):
         gs[4:, 3:], net_dict, sim_dict, conntype="lat")
     helpers.add_label(ax, "D Lateral connections", offset=(-0.3, 0.7))
 
+    fig.tight_layout(pad=0)
     plt.savefig(os.path.join(sim_dict["dir"],
                 "topomap_network_sketch_init_final.png"))
     plt.savefig(os.path.join(sim_dict["dir"],
@@ -359,11 +354,11 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
     with open(os.path.join(dir, f"connectivity_evolution_mean_weights_{conntype}.pkl"),  'rb') as f:
         all_mean_weights = pickle.load(f)
 
-    fig = plt.figure(figsize=(10, 10))
+    fig = plt.figure(figsize=(plot_settings.double_column_width, 8))
     fig.suptitle(title, weight="bold")
 
     gs = gridspec.GridSpec(4, 1)
-    gs.update(hspace=0.5, right=0.9, left=0.08, top=0.92, bottom=0.05)
+    gs.update(hspace=0.5, right=0.9, left=0.09, top=0.92, bottom=0.05)
 
     ############################################################################
     # A: Eliminations, B: Formations
@@ -372,6 +367,7 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
     gs_form = gs[1].subgridspec(2, 1, hspace=0.)
 
     # heat map
+    ax_heats = []
     for title, panel_label, change_type, gs_type in zip(
         ["Eliminations", "Formations"],
         ["A", "B"],
@@ -420,12 +416,16 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
         # Standard deviation of Gaussian
         ax_heat.axhline(y=sigma, color=pd["color_formation"],
                         label=r"$\sigma_\mathrm{form}=$" + f"{sigma}")
-
+        sns.despine(ax=ax_heat)
+        ax_heat.xaxis.grid(False)
+        
         ax_heat.set_xticks([])
         ax_heat.set_ylabel("Distance")
         ax_heat.legend(loc="upper right", frameon=False)
+        ax_heats.append(ax_heat)
 
     # histogram
+    ax_hists = []
     for change_type, gs_type, color in zip(["eliminated", "formed"],
                                            [gs_elim, gs_form],
                                            ["color_elimination", "color_formation"]):
@@ -453,9 +453,17 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
         xticks = ax_hist.get_xticks()
         ax_hist.set_xticklabels(xticks * 0.001)
         ax_hist.set_xlabel("Time (s)")
+        
+        sns.despine(ax=ax_hist)
+        ax_hist.xaxis.grid(False)
 
         ax_hist.set_ylabel("Rate (s$^{-1}$)")
-
+        ax_hists.append(ax_hist)
+    
+    # Align y axis labels for each pair
+    for heat, hist in zip(ax_heats, ax_hists):
+        fig.align_ylabels([heat, hist])
+    
     ############################################################################
     # C: Connections per neuron (in-degree and out-degree)
 
@@ -496,6 +504,9 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
     ax_degree.set_xlim(times[1], times[-1])
     ax_degree.set_ylabel("Degree")
 
+    sns.despine(ax=ax_degree)
+    ax_degree.xaxis.grid(False)
+
     # change time tick labels from ms to s
     xticks = ax_degree.get_xticks()
     ax_degree.set_xticklabels(xticks * 0.001)
@@ -524,6 +535,10 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
                                    extent=[times[1], times[-1],
                                            -net_dict["grid_num_x"] // 2+1, net_dict["grid_num_x"] // 2],
                                    rasterized=True)
+        sns.despine(ax=ax_conns)
+        ax_conns.xaxis.grid(False)
+        ax_conns.yaxis.grid(False)
+    
         if i == 0:
             helpers.add_label(ax_conns, "D")
             ax_conns.set_title("Connection probabilities and weights")
@@ -607,7 +622,7 @@ def plot_performance(runs, grid_num_x_default, tsim):
         data[key]["errors"] = [data[key][scale]["error"] for scale in scales]
 
     # figure
-    plt.figure(figsize=(pd["figure_width"], 3))
+    plt.figure(figsize=(plot_settings.double_column_width, 3))
     gs = gridspec.GridSpec(1, 1)
     gs.update(left=0.1, right=0.97, bottom=0.23,
               top=0.98, wspace=0.28, hspace=0.5)
@@ -658,7 +673,8 @@ def plot_performance(runs, grid_num_x_default, tsim):
                        )
         if not key == "py_simulate":
             bottom = top
-
+    sns.despine(ax=axlin)
+    axlin.xaxis.grid(False)
     axlin.set_ylabel("Time (s)")
     axlin.spines["top"].set_visible(False)
     axlin.spines["right"].set_visible(False)
