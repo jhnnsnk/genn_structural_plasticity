@@ -520,7 +520,7 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
 
     gs_conns = gs[3].subgridspec(2, 1, hspace=0.)
 
-    cmap = matplotlib.cm.get_cmap()
+    cmap = matplotlib.cm.get_cmap("viridis")
     cmap.set_bad(color='white')
 
     for i, data, label in zip([0, 1], [all_mean_conns, all_mean_weights],
@@ -537,7 +537,8 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
                                    aspect="auto",
                                    extent=[times[1], times[-1],
                                            -net_dict["grid_num_x"] // 2+1, net_dict["grid_num_x"] // 2],
-                                   rasterized=True)
+                                   rasterized=True,
+                                   cmap=cmap)
         sns.despine(ax=ax_conns)
         ax_conns.xaxis.grid(False)
         ax_conns.yaxis.grid(False)
