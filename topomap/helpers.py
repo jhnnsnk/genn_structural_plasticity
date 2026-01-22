@@ -1,12 +1,8 @@
 import matplotlib
 
 plot_dict = {
-    "figure_width": 15./2.54,  # 15cm
     "color_elimination": "#228833",  # green
     "color_formation": "#DDAA33",  # yellow
-    "SMALL_SIZE": 8,
-    "MEDIUM_SIZE": 10,
-    "BIGGER_SIZE": 12,
 }
 
 
