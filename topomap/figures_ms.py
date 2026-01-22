@@ -418,10 +418,11 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
                         label=r"$\sigma_\mathrm{form}=$" + f"{sigma}")
         sns.despine(ax=ax_heat)
         ax_heat.xaxis.grid(False)
-        
+
         ax_heat.set_xticks([])
         ax_heat.set_ylabel("Distance")
-        ax_heat.legend(loc="upper right", frameon=False)
+        ax_heat.legend(loc="lower left", bbox_to_anchor=(
+            0.8, 0.7, 1., 1.), frameon=False)
         ax_heats.append(ax_heat)
 
     # histogram
@@ -453,17 +454,17 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
         xticks = ax_hist.get_xticks()
         ax_hist.set_xticklabels(xticks * 0.001)
         ax_hist.set_xlabel("Time (s)")
-        
+
         sns.despine(ax=ax_hist)
         ax_hist.xaxis.grid(False)
 
         ax_hist.set_ylabel("Rate (s$^{-1}$)")
         ax_hists.append(ax_hist)
-    
+
     # Align y axis labels for each pair
     for heat, hist in zip(ax_heats, ax_hists):
         fig.align_ylabels([heat, hist])
-    
+
     ############################################################################
     # C: Connections per neuron (in-degree and out-degree)
 
@@ -472,7 +473,7 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
     ax_degree.set_title("Connections per neuron")
     for conns, label, lw, color in zip([conns_post, conns_pre],
                                        ["In-degree", "Out-degree"],
-                                       [4., 1.],
+                                       [3., 1.],
                                        ["black", "firebrick"]):
 
         mean = conns["mean"]
@@ -500,7 +501,9 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
                    zorder=10, clip_on=False)
     ax_degree.set_ylim(bottom=0)
 
-    ax_degree.legend(loc="lower right", ncol=3, frameon=False)
+    ax_degree.legend(loc="lower left", bbox_to_anchor=(0.12, -0.05, 1., 1.),
+                     ncol=3, columnspacing=0.3,
+                     frameon=False)
     ax_degree.set_xlim(times[1], times[-1])
     ax_degree.set_ylabel("Degree")
 
@@ -538,7 +541,7 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
         sns.despine(ax=ax_conns)
         ax_conns.xaxis.grid(False)
         ax_conns.yaxis.grid(False)
-    
+
         if i == 0:
             helpers.add_label(ax_conns, "D")
             ax_conns.set_title("Connection probabilities and weights")
