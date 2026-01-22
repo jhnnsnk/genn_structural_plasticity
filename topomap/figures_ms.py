@@ -445,7 +445,7 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
 
         ax_hist = plt.subplot(gs_type[1])
         ax_hist.bar(bins, rate, width=binwidth_hist_time_ms,
-                    align='edge', color=pd[color])
+                    align='edge', color=pd[color], edgecolor=pd[color])
 
         ax_hist.set_xlim(times[1], times[-1])
         ax_hist.set_ylim(0, np.max(rate)*1.3)
