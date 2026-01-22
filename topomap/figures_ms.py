@@ -128,6 +128,9 @@ def gs_plot_mean_conns_and_weights_vs_distance(gspec, net_dict, sim_dict, connty
 
             if i == 1:
                 ax.set_yticklabels([])
+
+            ax.xaxis.grid(False)
+            ax.yaxis.grid(False)
     return ax_label
 
 
@@ -422,7 +425,7 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
         ax_heat.set_xticks([])
         ax_heat.set_ylabel("Distance")
         ax_heat.legend(loc="lower left", bbox_to_anchor=(
-            0.8, 0.7, 1., 1.), frameon=False)
+            0.8, 0.7, 1., 1.), frameon=True)
         ax_heats.append(ax_heat)
 
     # histogram
@@ -501,9 +504,9 @@ def plot_connectivity_evolution(dir, net_dict, conntype="ff",
                    zorder=10, clip_on=False)
     ax_degree.set_ylim(bottom=0)
 
-    ax_degree.legend(loc="lower left", bbox_to_anchor=(0.12, -0.05, 1., 1.),
+    ax_degree.legend(loc="lower left", bbox_to_anchor=(0.22, 0, 1., 1.),
                      ncol=3, columnspacing=0.3,
-                     frameon=False)
+                     frameon=True)
     ax_degree.set_xlim(times[1], times[-1])
     ax_degree.set_ylabel("Degree")
 
@@ -687,7 +690,7 @@ def plot_performance(runs, grid_num_x_default, tsim):
     axlin.set_xlim(np.min(network_sizes), np.max(network_sizes))
     axlin.set_ylim(0, np.max(data["py_simulate"]["means"])*1.02)
     axlin.set_xlabel("Network size")
-    axlin.legend(loc="upper left", frameon=False, reverse=True)
+    axlin.legend(loc="upper left", frameon=True, reverse=True)
 
     plt.savefig(os.path.join(trunk_dir, "topomap_performance.png"))
     plt.savefig(os.path.join(trunk_dir, "topomap_performance.pdf"))
