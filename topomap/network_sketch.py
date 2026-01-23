@@ -293,6 +293,9 @@ def ax_plot_correlated_input_sketch(ax, net_dict, shift=(2, 3)):
     ax.set_xlabel("x-position")
     ax.set_ylabel("y-position")
 
+    ax.xaxis.grid(False)
+    ax.yaxis.grid(False)
+
     # color bar
     cax = ax.inset_axes(
         # left, bottom, width, height

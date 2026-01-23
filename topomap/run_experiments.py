@@ -202,7 +202,7 @@ if __name__ == "__main__":
         seeds = random_seeds[:num_seeds]
         for s, seed in enumerate(seeds):
             r = e * num_seeds + s
-            dir = f"{trunk_dir}/{exp}/{s}"
+            dir = os.path.join(trunk_dir, exp, str(s))
             runs[r] = {"experiment": exp, "run": s, "dir": dir, "seed": seed}
             runs[r]["new_net_params"] = {}
             runs[r]["new_sim_params"] = {"dir": dir, "seed": seed}
