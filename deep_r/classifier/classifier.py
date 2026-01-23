@@ -44,7 +44,7 @@ def inference(genn_kwargs, args, unique_suffix, network, serialiser, latest_spik
 
     compiler = InferenceCompiler(evaluate_timesteps=int(np.ceil(latest_spike_time)),
                                  batch_size=1 if args.cpu else args.batch_size, rng_seed=args.seed,
-                                 reset_vars_between_batches=False, 
+                                 dt=args.dt, reset_vars_between_batches=False, 
                                  kernel_profiling=args.kernel_profiling, **genn_kwargs)
     model_name = (f"classifier_test_{md5(unique_suffix.encode()).hexdigest()}"
                   if os.name == "nt" else f"classifier_test_{unique_suffix}")
@@ -87,7 +87,7 @@ parser.add_argument("--kernel-profiling", action="store_true", help="Output kern
 parser.add_argument("--test-validate-all", action="store_true", help="In validate or test mode, should we test checkpoints from all epochs?")
 parser.add_argument("--batch-size", type=int, default=512, help="Batch size")
 parser.add_argument("--num-epochs", type=int, default=50, help="Number of training epochs")
-parser.add_argument("--dataset", choices=["ssc", "shd", "dvs_gesture", "mnist"], required=True)
+parser.add_argument("--dataset", choices=["ssc", "shd", "dvs_gesture", "mnist", "n_mnist"], required=True)
 parser.add_argument("--dataset-threshold", type=int, default=None, help="Minimum number of events in timestep required to spike")
 parser.add_argument("--seed", type=int, default=1234)
 parser.add_argument("--rewire", action="store_true", help="Use Deep-R to rewire sparse networks")
@@ -99,7 +99,9 @@ parser.add_argument("--hidden-model", choices=["lif", "alif"], nargs="*")
 parser.add_argument("--hidden-input-sparsity", type=float, nargs="*")
 parser.add_argument("--hidden-recurrent-sparsity", type=float, nargs="*")
 parser.add_argument("--row-padding-prop", type=float, default=0.0)
-
+parser.add_argument("--dt", type=float, default=1.0)
+parser.add_argument("--merge-polarities", action="store_true")
+parser.add_argument("--max-time", type=float, default=None)
 args = parser.parse_args()
 
 num_hidden_layers = max(len(args.hidden_size), 
@@ -239,7 +241,7 @@ if train:
     # Create EProp compiler and compile
     compiler = EPropCompiler(example_timesteps=int(np.ceil(latest_spike_time)),
                              losses="sparse_categorical_crossentropy", rng_seed=args.seed,
-                             optimiser="adam", batch_size=args.batch_size, 
+                             optimiser="adam", dt=args.dt, batch_size=args.batch_size, 
                              communicator=communicator,
                              deep_r_conns=deep_r_conns,
                              deep_r_l1_strength=args.l1_strength,
