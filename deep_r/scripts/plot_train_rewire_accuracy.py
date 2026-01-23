@@ -113,8 +113,8 @@ if __name__ == "__main__":
                             ("Dense", "params_0_False_0_512_100_dvs_gesture_1_????_512_True_alif_1.0_1.0_full.json", 4)])
     plot_rewiring(axes[1], "params_0_False_0_True_512_100_dvs_gesture_1_????_True_0.5_512_True_alif_0.05_0.01_5.0_full.json", 5)
     
-    axes[0].set_title("A", loc="left")
-    axes[1].set_title("B", loc="left")
+    axes[0].set_title("A", loc="left", weight="bold")
+    axes[1].set_title("B", loc="left", weight="bold")
     # Remove axis junk
     for a in axes:
         sns.despine(ax=a)

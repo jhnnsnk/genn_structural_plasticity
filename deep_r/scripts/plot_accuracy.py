@@ -80,8 +80,6 @@ def plot_accuracy_axis(df, axis, bar_group_params, xtick_format, ref_xtick):
     sns.despine(ax=axis)
     axis.xaxis.grid(False)
     axis.set_xticks(tick_x)
-    axis.set_ylabel("Accuracy (%)")
-    axis.set_ylim((60, 100))
     axis.set_xticklabels(["Dense" if s == ref_xtick else f"Sparse\n{s}" for s in xticks.index])
 
     return [static_train_actor, deep_r_train_actor, static_test_actor, deep_r_test_actor]
