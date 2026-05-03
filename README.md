@@ -6,7 +6,25 @@ This repository contains the code and data to reproduce the figures of the manus
 A flexible framework for structural plasticity in GPU-accelerated sparse spiking neural networks  
 James C. Knight, Johanna Senk, Thomas Nowotny
 
-If you (re)use the code or otherwise find this resource useful, please respect the [MIT License](https://github.com/jhnnsnk/genn_structural_plasticity/blob/main/LICENSE) agreement and cite the corresponding scientific publication.
+If you (re)use the code or otherwise find this resource useful, please respect the [MIT License](https://github.com/jhnnsnk/genn_structural_plasticity/blob/main/LICENSE) agreement and cite the corresponding scientific publication:
+
+```
+@article{KnightSenkNowotny2026,
+  title = {A flexible framework for structural plasticity in GPU-accelerated sparse spiking neural networks},
+  volume = {6},
+  ISSN = {2634-4386},
+  url = {http://dx.doi.org/10.1088/2634-4386/ae4535},
+  DOI = {10.1088/2634-4386/ae4535},
+  number = {1},
+  journal = {Neuromorphic Computing and Engineering},
+  publisher = {IOP Publishing},
+  author = {Knight,  James C and Senk,  Johanna and Nowotny,  Thomas},
+  year = {2026},
+  month = Mar,
+  pages = {014019}
+}
+```
+
 
 ## DEEP R classifier
 
